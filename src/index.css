@@ -1,0 +1,193 @@
+@import "tailwindcss";
+
+:root,
+[data-theme="dark"] {
+  --bg-dark: #0b0e1a;
+  --panel: #161b30;
+  --panel-2: #1e2442;
+  --panel-3: #262c52;
+  --border: #323862;
+  --text-primary: #f2f4ff;
+  --text-muted: #8b92b8;
+  --accent: #4fd1ff;
+  --purple: #8b5cf6;
+  --green: #34d399;
+  --gray-status: #6b7290;
+  --bg-image:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(139, 92, 246, 0.12), transparent),
+    radial-gradient(ellipse 50% 40% at 15% 70%, rgba(79, 209, 255, 0.10), transparent);
+}
+
+[data-theme="light"] {
+  --bg-dark: #eef1f6;
+  --panel: #f9fafc;
+  --panel-2: #f0f2f7;
+  --panel-3: #e6e9f1;
+  --border: #dde1ea;
+  --text-primary: #262b3a;
+  --text-muted: #686e85;
+  --accent: #0e7c93;
+  --purple: #7c5cd6;
+  --green: #1f8a52;
+  --gray-status: #8a90a3;
+  --bg-image:
+    radial-gradient(ellipse 60% 50% at 80% 10%, rgba(124, 58, 237, 0.05), transparent),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(14, 124, 147, 0.05), transparent);
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  background-image: var(--bg-image);
+  background-attachment: fixed;
+}
+
+/* Tema değiştiğinde (data-theme attribute'u anlık değişiyor) bazı tarayıcılar
+   "sticky" + "backdrop-blur" kullanan katmanları (üst header, mobil alt
+   menü) doğru tazelemiyor — bir kısmı eski temada "donmuş" kalabiliyor.
+   Geçişe açık bir transition vermek tarayıcıyı bu katmanları yeniden
+   boyamaya zorluyor, glitch'i ortadan kaldırıyor. */
+*,
+*::before,
+*::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--accent);
+  color: #0b0e1a;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Login hero: radar sweep + banking flight orbit (pure CSS, theme-aware) ---------- */
+.hero-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@keyframes radar-pulse {
+  0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+}
+.radar-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(70vw, 900px);
+  height: min(70vw, 900px);
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  animation: radar-pulse 4s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+.radar-ring.delay-1 { animation-delay: 1.3s; }
+.radar-ring.delay-2 { animation-delay: 2.6s; }
+
+@keyframes radar-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(80vw, 1000px);
+  height: min(80vw, 1000px);
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, color-mix(in srgb, var(--accent) 22%, transparent), transparent 35%);
+  animation: radar-spin 16s linear infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes orbit-fly {
+  0%   { transform: translate(-42vw, 9vh)  scale(0.55) rotate(6deg);  opacity: 0; }
+  8%   { opacity: 0.95; }
+  25%  { transform: translate(-16vw, -9vh) scale(0.85) rotate(-5deg); }
+  50%  { transform: translate(14vw, 7vh)   scale(1.05) rotate(7deg); }
+  75%  { transform: translate(34vw, -11vh) scale(0.8)  rotate(-7deg); }
+  92%  { opacity: 0.95; }
+  100% { transform: translate(54vw, 5vh)   scale(0.5)  rotate(5deg); opacity: 0; }
+}
+.orbit-drone {
+  position: absolute;
+  top: 28%;
+  left: 50%;
+  width: 150px;
+  margin-left: -75px;
+  border-radius: 10px;
+  animation: orbit-fly 13s ease-in-out infinite;
+  filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+.orbit-drone.trail-1 {
+  animation-delay: -0.5s;
+  opacity: 0.35 !important;
+  filter: blur(2px);
+}
+.orbit-drone.trail-2 {
+  animation-delay: -1s;
+  opacity: 0.18 !important;
+  filter: blur(4px);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+.twinkle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--text-primary);
+  animation: twinkle 2.6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.9; }
+}
+.pulse-glow {
+  animation: pulse-glow 3.5s ease-in-out infinite;
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float-y {
+  animation: float-y 4s ease-in-out infinite;
+}
+
+/* ---------- Clickable row hover (theme-safe, no washed-out brightness) ---------- */
+.row-card {
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+  border: 1px solid transparent;
+}
+.row-card:hover {
+  background: var(--panel-3) !important;
+  border-color: var(--accent);
+}
+.row-card:active {
+  transform: scale(0.995);
+}
+
+@keyframes modal-in {
+  0% { opacity: 0; transform: scale(0.96) translateY(6px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-pop {
+  animation: modal-in 0.18s ease-out;
+}

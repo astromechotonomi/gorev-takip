@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- index.html sabit isimli olduğu için tarayıcı/CDN onu cache'leyip eski
+         JS bundle'ına işaret etmeye devam edebilir. Bu üç meta etiketi onu
+         engellemeye çalışır (GitHub Pages'te gerçek HTTP Cache-Control
+         header'ı ayarlayamadığımız için en iyi alternatif bu). Asıl güvenli
+         çözüm uygulama içindeki güncelleme kontrolü (UpdateChecker). -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <!-- Tema, normalde React yüklendikten sonra (ThemeContext) ayarlanıyor.
+         Bu süre arasında tarayıcı varsayılan beyaz arka planı gösterip
+         sonra siyaha "geçiş" yapıyor (klasik FOUC). Bu küçük senkron script
+         CSS/React'i beklemeden, sayfa boyanmadan ÖNCE doğru rengi/temayı
+         uyguluyor — flaş tamamen ortadan kalkar. -->
+    <script>
+      (function () {
+        var theme = "dark";
+        try {
+          theme = localStorage.getItem("at-theme") || "dark";
+        } catch (e) {}
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.style.backgroundColor = theme === "light" ? "#eef1f6" : "#0b0e1a";
+      })();
+    </script>
+    <title>Astromech Otonomi · Görev Takip</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
