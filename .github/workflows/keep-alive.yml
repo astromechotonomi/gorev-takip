@@ -1,0 +1,25 @@
+name: Supabase Keep-Alive
+
+# Supabase'in ücretsiz planı, veritabanına 7 gün hiç istek gelmezse projeyi
+# otomatik durduruyor (pause). Bu workflow haftada iki kez küçük bir sorgu
+# göndererek bu sayacı sıfırlıyor — proje hiç uyumuyor, ekstra maliyet yok.
+on:
+  schedule:
+    # Her Pazar ve Çarşamba 06:00 UTC (TR saatiyle ~09:00). Cron'lar UTC'dir.
+    - cron: "0 6 * * 0,3"
+  workflow_dispatch: # İstersen Actions sekmesinden manuel de tetikleyebilirsin
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Supabase'e küçük bir sorgu gönder
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/clusters?select=id&limit=1" \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}")
+          echo "Supabase yanıt kodu: $status"
+          if [ "$status" -ge 400 ]; then
+            echo "Beklenmeyen durum kodu, ama bu sorgu veritabanına ulaştığı için inaktivite sayacı yine de sıfırlanmış olmalı."
+          fi
